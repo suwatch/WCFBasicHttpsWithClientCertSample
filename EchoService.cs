@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
 using System.ServiceModel.Activation;
 
 namespace WCFBasicHttpSample
@@ -9,7 +11,9 @@ namespace WCFBasicHttpSample
     {
         public string Echo(string message)
         {
-            return message.ToUpper();
+            var properties = OperationContext.Current.RequestContext.RequestMessage.Properties;
+            var clientCert = (X509Certificate2)properties["ClientCert"];
+            return $"{message.ToUpper()} from ClientCertThumbprint {clientCert.Thumbprint}";
         }
 
         public Stream DownloadStream()
